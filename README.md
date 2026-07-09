@@ -70,7 +70,7 @@ berlin-food-delivery-eta-prediction/
 - Imputed missing values (median for numeric, mode for categorical)
 
 ### 2. Exploratory Data Analysis
-- Analyzed delivery time distribution and relationships with traffic, weather, vehicle type, city type, delivery person rating, festival days, and multiple deliveries
+- Analysed delivery time distribution and relationships with traffic, weather, vehicle type, city type, delivery person rating, festival days, and multiple deliveries
 - Identified small-sample caveats (e.g. Semi-Urban city type and Festival days were under-represented, so strong-looking patterns there were flagged as low-confidence rather than headline findings)
 
 ### 3. Feature Engineering
