@@ -2,7 +2,7 @@
 
 ML regression project predicting food delivery times using distance, weather, traffic, and order context. Built with real coordinates (haversine distance), feature engineering, and model comparison across Linear Regression, Decision Trees, Random Forest, and XGBoost/Gradient Boosting with hyperparameter tuning. Enriched with real historical Berlin weather data. By a former Wolt delivery rider.
 
-**Presentation slides:** [Add link here]
+**Presentation slides:** [https://docs.google.com/presentation/d/1JaLRyyoe5YHGxdhftHRdhyr4K7Bb_TQH5nukWFxOk4w/edit?usp=sharing]
 
 ---
 
