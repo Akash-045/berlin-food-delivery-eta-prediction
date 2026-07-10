@@ -123,7 +123,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.caption("*Built by a former Wolt delivery rider, as a data science project.*")
+st.caption("*Built by a former Wolt delivery rider, as a Machine Learning Project.*")
 st.divider()
 
 if model is None:
