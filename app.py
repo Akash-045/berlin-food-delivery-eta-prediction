@@ -5,6 +5,19 @@ import joblib
 import json
 from datetime import datetime
 import os
+import matplotlib.pyplot as plt
+
+# ============================================================
+# BRAND PALETTE (matches presentation deck)
+# ============================================================
+NAVY = "#2F3C7E"
+CORAL = "#F96167"
+GOLD = "#F9E795"
+LIGHT_CORAL = "#FDEBEA"
+LIGHT_NAVY = "#E7E9F5"
+OFFWHITE = "#FAFAFA"
+DARKTEXT = "#23283A"
+MUTED = "#6B7280"
 
 # ============================================================
 # PAGE CONFIG
@@ -14,6 +27,57 @@ st.set_page_config(
     page_icon="🛵",
     layout="centered"
 )
+
+# ============================================================
+# CUSTOM STYLING
+# ============================================================
+st.markdown(f"""
+<style>
+    .stApp {{
+        background-color: {OFFWHITE};
+    }}
+    h1, h2, h3 {{
+        color: {NAVY} !important;
+        font-family: Georgia, serif;
+    }}
+    .stButton > button {{
+        background-color: {CORAL};
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.6em 1.2em;
+    }}
+    .stButton > button:hover {{
+        background-color: {NAVY};
+        color: white;
+    }}
+    div[data-testid="stMetricValue"] {{
+        color: {NAVY};
+    }}
+    .footer-box {{
+        background-color: {NAVY};
+        padding: 1.4rem;
+        border-radius: 12px;
+        margin-top: 1.5rem;
+    }}
+    .footer-box a {{
+        color: {GOLD} !important;
+        text-decoration: none;
+        font-weight: 600;
+    }}
+    .platform-badge {{
+        display: inline-block;
+        background-color: {LIGHT_CORAL};
+        color: {NAVY};
+        padding: 0.25em 0.7em;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 600;
+        margin: 0.2em;
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 # ============================================================
 # LOAD MODEL (cached so it only loads once)
@@ -49,9 +113,17 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 st.title("🛵 Berlin Food Delivery ETA Predictor")
 st.markdown(
     "Predict how long a food delivery will take, based on a machine learning model "
-    "trained on distance, traffic, weather, and rider context. "
-    "*Built by a former Wolt delivery rider, as a data science project.*"
+    "trained on distance, traffic, weather, and rider context."
 )
+st.markdown(
+    f"""
+    <span class="platform-badge">🛵 Inspired by Wolt</span>
+    <span class="platform-badge">🍔 Uber Eats</span>
+    <span class="platform-badge">🥡 Lieferando</span>
+    """,
+    unsafe_allow_html=True
+)
+st.caption("*Built by a former Wolt delivery rider, as a data science project.*")
 st.divider()
 
 if model is None:
@@ -195,8 +267,53 @@ if st.button("🔮 Predict Delivery Time", type="primary", use_container_width=T
         st.write(f"- **Restaurant prep time:** {prep_time_min} min")
 
 st.divider()
+
+# ============================================================
+# MODEL INSIGHTS: FEATURE IMPORTANCE
+# ============================================================
+st.subheader("📊 What Drives This Model's Predictions?")
+st.caption("Feature importance pulled directly from the trained model — not hardcoded.")
+
+importances = pd.Series(model.feature_importances_, index=feature_columns)
+top_features = importances.sort_values(ascending=True).tail(8)
+
+fig, ax = plt.subplots(figsize=(7, 4))
+bars = ax.barh(top_features.index, top_features.values, color=CORAL)
+ax.set_facecolor(OFFWHITE)
+fig.patch.set_facecolor(OFFWHITE)
+ax.set_xlabel("Importance", color=DARKTEXT, fontsize=10)
+ax.tick_params(colors=DARKTEXT, labelsize=9)
+for spine in ["top", "right"]:
+    ax.spines[spine].set_visible(False)
+for spine in ["left", "bottom"]:
+    ax.spines[spine].set_color("#D1D5DB")
+ax.set_title("Top 8 Features (Gradient Boosting)", color=NAVY, fontsize=12, fontweight="bold", loc="left")
+plt.tight_layout()
+st.pyplot(fig)
+
 st.caption(
-    "Model: Tuned Gradient Boosting Regressor (R² ≈ 0.68, MAE ≈ 4.2 min) · "
-    "Trained on 45,000+ food delivery orders · "
-    "Built as part of a Data Analytics & Machine Learning project, Ironhack Berlin."
+    "Delivery person rating and the distance × traffic interaction consistently rank highest — "
+    "confirming that rider experience and congestion together matter more than distance alone."
+)
+
+st.divider()
+
+# ============================================================
+# FOOTER
+# ============================================================
+st.markdown(
+    f"""
+    <div class="footer-box">
+        <div style="color: white; font-size: 1.05em; font-weight: 700;">Akash Samantray</div>
+        <div style="color: {GOLD}; font-size: 0.85em; margin-bottom: 0.6em;">
+            Data Analyst · Former Wolt Delivery Rider · Berlin, Germany
+        </div>
+        <div style="color: #C7CCEA; font-size: 0.85em; line-height: 1.6;">
+            Model: Tuned Gradient Boosting Regressor (R² ≈ 0.68, MAE ≈ 4.2 min)<br>
+            Trained on 45,000+ food delivery orders · Ironhack Berlin ML Project<br>
+            <a href="https://www.linkedin.com/in/akash-samantray/" target="_blank">🔗 Connect on LinkedIn</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
